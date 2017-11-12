@@ -13,6 +13,8 @@
 
 #include <EssexEngineCore/imgui.h>
 
+#include <stdio.h>
+
 EssexEngine::Apps::Game::MainMenuState::MainMenuState(WeakPointer<Context> _context)
 :State(_context) {
 }
@@ -20,17 +22,30 @@ EssexEngine::Apps::Game::MainMenuState::MainMenuState(WeakPointer<Context> _cont
 EssexEngine::Apps::Game::MainMenuState::~MainMenuState() {}
 
 void EssexEngine::Apps::Game::MainMenuState::Setup() {
-    gameFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
+    CachedPointer<Daemons::FileSystem::IFileBuffer> gameFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
     
-    gameDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(gameFile);
+    gameDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+        gameFile.ToWeakPointer()
+    );
 
-    std::string mapName = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetStringFromNode(gameDocument, "initialMap");
+    std::string mapName = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetStringFromNode(
+        WeakPointer<Daemons::Json::IJsonDocument>(gameDocument.get()),
+        "initialMap"
+    );
     
-    mapFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(mapName);
+    CachedPointer<Daemons::FileSystem::IFileBuffer> mapFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(mapName);
     
-    mapDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(mapFile);
+    mapDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+        mapFile.ToWeakPointer()
+    );
     
-    context->GetStateStack()->Push(new MapState(context, gameDocument.GetWeakPointer(), mapDocument.GetWeakPointer()));
+    context->GetStateStack()->Push(
+        new MapState(
+            context,
+            WeakPointer<Daemons::Json::IJsonDocument>(gameDocument.get()),
+            WeakPointer<Daemons::Json::IJsonDocument>(mapDocument.get())
+        )
+    );
 }
 
 void EssexEngine::Apps::Game::MainMenuState::Logic() {
