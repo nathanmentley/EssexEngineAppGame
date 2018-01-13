@@ -22,28 +22,28 @@ EssexEngine::Apps::Game::MainMenuState::MainMenuState(WeakPointer<Context> _cont
 EssexEngine::Apps::Game::MainMenuState::~MainMenuState() {}
 
 void EssexEngine::Apps::Game::MainMenuState::Setup() {
-    CachedPointer<Daemons::FileSystem::IFileBuffer> gameFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
+    CachedPointer<std::string, Daemons::FileSystem::IFileBuffer> gameFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
     
-    gameDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+    context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
         gameFile.ToWeakPointer()
-    );
+    ).swap(gameDocument);
 
     std::string mapName = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetStringFromNode(
-        WeakPointer<Daemons::Json::IJsonDocument>(gameDocument.get()),
+        gameDocument.ToWeakPointer(),
         "initialMap"
     );
     
-    CachedPointer<Daemons::FileSystem::IFileBuffer> mapFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(mapName);
+    CachedPointer<std::string, Daemons::FileSystem::IFileBuffer> mapFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(mapName);
     
-    mapDocument = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+    context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
         mapFile.ToWeakPointer()
-    );
+    ).swap(mapDocument);
     
     context->GetStateStack()->Push(
         new MapState(
             context,
-            WeakPointer<Daemons::Json::IJsonDocument>(gameDocument.get()),
-            WeakPointer<Daemons::Json::IJsonDocument>(mapDocument.get())
+            gameDocument.ToWeakPointer(),
+            mapDocument.ToWeakPointer()
         )
     );
 }

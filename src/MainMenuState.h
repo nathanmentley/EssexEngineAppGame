@@ -35,7 +35,7 @@ namespace Game{
 			void Render();
             bool PauseUnder();
         private:
-            std::unique_ptr<Daemons::Json::IJsonDocument> gameDocument;
-            std::unique_ptr<Daemons::Json::IJsonDocument> mapDocument;
+            UniquePointer<Daemons::Json::IJsonDocument> gameDocument;
+            UniquePointer<Daemons::Json::IJsonDocument> mapDocument;
 	};
 }}};
