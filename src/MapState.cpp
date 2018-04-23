@@ -15,7 +15,6 @@ EssexEngine::Apps::Game::MapState::MapState(WeakPointer<Context> _context, WeakP
 :State(_context) {
     gameDocument = _gameDocument;
     mapDocument = _mapDocument;
-    showDebugConsole = false;
 }
 
 EssexEngine::Apps::Game::MapState::~MapState()
@@ -67,7 +66,7 @@ void EssexEngine::Apps::Game::MapState::Logic() {
     }
     
     if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Tilde)) {
-        showDebugConsole = !showDebugConsole;
+        //showDebugConsole = !showDebugConsole;
     }
     
     //Update Map;
@@ -75,14 +74,8 @@ void EssexEngine::Apps::Game::MapState::Logic() {
 }
 
 void EssexEngine::Apps::Game::MapState::Render() {
-    map->Render();
-    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->RenderString("test", 100, 100);
-    
-    if(showDebugConsole) {
-        ImGui::Begin("Debug Console");
-        ImGui::Text("Hello");
-        ImGui::End();
-    }
+    map->Render(context->GetDaemon<Daemons::Gfx::GfxDaemon>()->GetPrimaryRenderContext());
+    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->RenderString(context->GetDaemon<Daemons::Gfx::GfxDaemon>()->GetPrimaryRenderContext(), "test", 100, 100);
 }
 
 bool EssexEngine::Apps::Game::MapState::PauseUnder() {

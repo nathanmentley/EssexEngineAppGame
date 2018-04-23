@@ -10,7 +10,6 @@
  */
 #pragma once
 
-#include <EssexEngineCore/imgui.h>
 #include <EssexEngineCore/State.h>
 #include <EssexEngineGfxDaemon/Entity.h>
 
@@ -36,6 +35,5 @@ namespace Game{
         WeakPointer<Daemons::Json::IJsonDocument> gameDocument;
         WeakPointer<Daemons::Json::IJsonDocument> mapDocument;
         Libs::IsoMap::Map* map;
-        bool showDebugConsole;
     };
 }}};

@@ -23,19 +23,19 @@
 namespace EssexEngine{
 namespace Apps{
 namespace Game{
-	class MainMenuState:public MapState::State
-	{
-		public:
+    class MainMenuState:public MapState::State
+    {
+        public:
             MainMenuState(WeakPointer<Context> _context);
-			~MainMenuState();
-			
-			//override
-			void Setup();
-			void Logic();
-			void Render();
+            ~MainMenuState();
+            
+            //override
+            void Setup();
+            void Logic();
+            void Render();
             bool PauseUnder();
         private:
             UniquePointer<Daemons::Json::IJsonDocument> gameDocument;
             UniquePointer<Daemons::Json::IJsonDocument> mapDocument;
-	};
+    };
 }}};

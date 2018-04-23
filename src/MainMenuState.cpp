@@ -11,10 +11,6 @@
 
 #include <EssexEngineAppGame/MainMenuState.h>
 
-#include <EssexEngineCore/imgui.h>
-
-#include <stdio.h>
-
 EssexEngine::Apps::Game::MainMenuState::MainMenuState(WeakPointer<Context> _context)
 :State(_context) {
 }
