@@ -11,61 +11,87 @@
 
 #include <EssexEngineAppGame/MapState.h>
 
-EssexEngine::Apps::Game::MapState::MapState(WeakPointer<Context> _context, WeakPointer<Daemons::Json::IJsonDocument> _gameDocument, WeakPointer<Daemons::Json::IJsonDocument> _mapDocument)
-:State(_context) {
-    gameDocument = _gameDocument;
-    mapDocument = _mapDocument;
-}
+using EssexEngine::UniquePointer;
 
-EssexEngine::Apps::Game::MapState::~MapState()
-{
-    delete map;
-}
+using EssexEngine::Daemons::Json::IJsonDocument;
+using EssexEngine::Daemons::Input::KeyboardButton::InputKeys;
 
-void EssexEngine::Apps::Game::MapState::Setup() {
-    //setup map.
-    map = new Libs::IsoMap::Map(context, gameDocument, mapDocument);
-}
+using EssexEngine::Daemons::Input::InputDaemon;
+using EssexEngine::Daemons::Gfx::GfxDaemon;
 
-void EssexEngine::Apps::Game::MapState::Logic() {
+using EssexEngine::Libs::IsoMap::Map;
+using EssexEngine::Libs::IsoMap::MapCharacterActionTypes;
+using EssexEngine::Libs::IsoMap::CharacterAnimations;
+
+using EssexEngine::Apps::Game::MapState;
+
+MapState::MapState(
+    WeakPointer<Context> _context,
+    WeakPointer<IJsonDocument> _gameDocument,
+    WeakPointer<IJsonDocument> _mapDocument
+):State(_context),
+map(
+    UniquePointer<Map>(
+        new Map(
+            _context,
+            _context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+            _gameDocument,
+            _mapDocument
+        )
+    )
+) {}
+
+MapState::~MapState(){}
+
+void MapState::Setup() {}
+
+void MapState::Logic() {
     //set x / y position
     map->SetScreenX(map->GetCharacter()->GetX());
     map->SetScreenY(map->GetCharacter()->GetY());
     
     //Listen to Actions.
-    if (context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Space)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::Attack, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Left) && context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Up)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveNorthWest, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Right) && context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Up)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveNorthEast, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Left) && context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Down)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveSouthWest, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Right) && context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Down)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveSouthEast, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Left)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveWest, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Right)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveEast, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Up)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveNorth, 0));
-    } else if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Down)) {
-        map->GetCharacter()->QueueAction(new Libs::IsoMap::MapCharacterAction(Libs::IsoMap::MoveSouth, 0));
+    if (context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Space)) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::Attack);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)
+    ) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorthWest);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)
+    ) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorthEast);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)
+    ) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouthWest);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)
+    ) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouthEast);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left)) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveWest);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right)) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveEast);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorth);
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)) {
+        map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouth);
     } else {
-        map->GetCharacter()->SetAnimation(Libs::IsoMap::Stance);
+        map->GetCharacter()->SetAnimation(CharacterAnimations::Stance);
     }
     
-    if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Plus)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Plus)) {
         map->ZoomIn();
     }
-    if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Minus)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Minus)) {
         map->ZoomOut();
     }
-    if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Esc)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Esc)) {
         this->completed = true;
     }
     
-    if(context->GetDaemon<Daemons::Input::InputDaemon>()->IsKeyPressed(Daemons::Input::KeyboardButton::Tilde)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Tilde)) {
         //showDebugConsole = !showDebugConsole;
     }
     
@@ -73,11 +99,17 @@ void EssexEngine::Apps::Game::MapState::Logic() {
     map->Update();
 }
 
-void EssexEngine::Apps::Game::MapState::Render() {
-    map->Render(context->GetDaemon<Daemons::Gfx::GfxDaemon>()->GetPrimaryRenderContext());
-    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->RenderString(context->GetDaemon<Daemons::Gfx::GfxDaemon>()->GetPrimaryRenderContext(), "test", 100, 100);
+void MapState::Render() {
+    map->Render();
+
+    context->GetDaemon<GfxDaemon>()->RenderString(
+        context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+        "test",
+        100,
+        100
+    );
 }
 
-bool EssexEngine::Apps::Game::MapState::PauseUnder() {
+bool MapState::PauseUnder() {
     return true;
 }

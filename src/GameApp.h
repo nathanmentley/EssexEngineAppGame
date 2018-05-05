@@ -11,6 +11,9 @@
 #pragma once
 
 #include <EssexEngineCore/BaseApp.h>
+#include <EssexEngineAppGame/MainMenuState.h>
+
+#include <iostream>
 
 namespace EssexEngine{
 namespace Apps{
@@ -18,9 +21,13 @@ namespace Game{
     class GameApp: public Core::BaseApp
     {
         public:
-            GameApp(Core::Models::IState* _initState): BaseApp(_initState) { }
+            GameApp(WeakPointer<Context> context): BaseApp(),
+                initState(UniquePointer<MainMenuState>(new MainMenuState(context))) {}
             ~GameApp() {}
             std::string GetAppName() { return "Game"; }
             std::string GetAppVersion() { return ESSEX_ENGINE_VERSION; }
+            WeakPointer<Core::Models::IState> GetInitState() { return initState.ToWeakPointer().Cast<Core::Models::IState>(); };
+        private:
+            UniquePointer<MainMenuState> initState;
     };
 }}};

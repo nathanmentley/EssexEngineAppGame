@@ -9,15 +9,17 @@
  * this file. If not, please visit: https://github.com/nathanmentley/EssexEngine
  */
 
+#include <EssexEngineCore/Context.h>
 #include <EssexEngineAppGame/GameApp.h>
-#include <EssexEngineAppGame/MainMenuState.h>
+
+using EssexEngine::Context;
+using EssexEngine::WeakPointer;
+using EssexEngine::Core::BaseApp;
+
+using EssexEngine::Apps::Game::GameApp;
 
 extern "C" {
-    void app_init(EssexEngine::Context* context) {
-        context->RegisterApp(
-            new EssexEngine::Apps::Game::GameApp(
-                new EssexEngine::Apps::Game::MainMenuState(context)
-            )
-        );
+    void app_init(WeakPointer<Context> context) {
+        context->RegisterApp(new GameApp(context));
     }
 }

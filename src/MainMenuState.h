@@ -37,5 +37,7 @@ namespace Game{
         private:
             UniquePointer<Daemons::Json::IJsonDocument> gameDocument;
             UniquePointer<Daemons::Json::IJsonDocument> mapDocument;
+
+            UniquePointer<MapState> mapState;
     };
 }}};

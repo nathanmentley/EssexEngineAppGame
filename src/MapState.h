@@ -11,7 +11,6 @@
 #pragma once
 
 #include <EssexEngineCore/State.h>
-#include <EssexEngineGfxDaemon/Entity.h>
 
 #include <EssexEngineLibIsoMap/Map.h>
 
@@ -22,18 +21,16 @@ namespace Apps{
 namespace Game{
     class MapState:public Core::Models::State
     {
-    public:
-        MapState(WeakPointer<Context> _context, WeakPointer<Daemons::Json::IJsonDocument> _gameDocument, WeakPointer<Daemons::Json::IJsonDocument> _mapDocument);
-        ~MapState();
-        
-        //override
-        void Setup();
-        void Logic();
-        void Render();
-        bool PauseUnder();
-    private:
-        WeakPointer<Daemons::Json::IJsonDocument> gameDocument;
-        WeakPointer<Daemons::Json::IJsonDocument> mapDocument;
-        Libs::IsoMap::Map* map;
+        public:
+            MapState(WeakPointer<Context> _context, WeakPointer<Daemons::Json::IJsonDocument> _gameDocument, WeakPointer<Daemons::Json::IJsonDocument> _mapDocument);
+            ~MapState();
+            
+            //override
+            void Setup();
+            void Logic();
+            void Render();
+            bool PauseUnder();
+        private:
+            UniquePointer<Libs::IsoMap::Map> map;
     };
 }}};

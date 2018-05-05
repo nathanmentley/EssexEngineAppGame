@@ -11,46 +11,59 @@
 
 #include <EssexEngineAppGame/MainMenuState.h>
 
-EssexEngine::Apps::Game::MainMenuState::MainMenuState(WeakPointer<Context> _context)
-:State(_context) {
-}
+using EssexEngine::Core::Models::IState;
+using EssexEngine::Daemons::FileSystem::IFileBuffer;
 
-EssexEngine::Apps::Game::MainMenuState::~MainMenuState() {}
+using EssexEngine::Daemons::FileSystem::FileSystemDaemon;
+using EssexEngine::Daemons::Json::JsonDaemon;
 
-void EssexEngine::Apps::Game::MainMenuState::Setup() {
-    CachedPointer<std::string, Daemons::FileSystem::IFileBuffer> gameFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
-    
-    context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+using EssexEngine::Apps::Game::MainMenuState;
+using EssexEngine::Apps::Game::MapState;
+
+MainMenuState::MainMenuState(WeakPointer<Context> _context): State(_context),
+mapState(
+    UniquePointer<MapState>()
+) {}
+
+MainMenuState::~MainMenuState() {}
+
+void MainMenuState::Setup() {
+    //load game config file
+    CachedPointer<std::string, IFileBuffer> gameFile =
+        context->GetDaemon<FileSystemDaemon>()->ReadFile(GAME_FILE_LOCATION);
+    context->GetDaemon<JsonDaemon>()->GetJsonDocument(
         gameFile.ToWeakPointer()
     ).swap(gameDocument);
 
-    std::string mapName = context->GetDaemon<Daemons::Json::JsonDaemon>()->GetStringFromNode(
+    //load initial map from game config
+    std::string mapName = context->GetDaemon<JsonDaemon>()->GetStringFromNode(
         gameDocument.ToWeakPointer(),
         "initialMap"
     );
-    
-    CachedPointer<std::string, Daemons::FileSystem::IFileBuffer> mapFile = context->GetDaemon<Daemons::FileSystem::FileSystemDaemon>()->ReadFile(mapName);
-    
-    context->GetDaemon<Daemons::Json::JsonDaemon>()->GetJsonDocument(
+    CachedPointer<std::string, IFileBuffer> mapFile =
+        context->GetDaemon<FileSystemDaemon>()->ReadFile(mapName);
+    context->GetDaemon<JsonDaemon>()->GetJsonDocument(
         mapFile.ToWeakPointer()
     ).swap(mapDocument);
     
-    context->GetStateStack()->Push(
+    //load MapState with the initial map.
+    mapState.Replace(
         new MapState(
             context,
             gameDocument.ToWeakPointer(),
             mapDocument.ToWeakPointer()
         )
     );
+    context->GetStateStack()->Push(mapState.ToWeakPointer().Cast<IState>());
 }
 
-void EssexEngine::Apps::Game::MainMenuState::Logic() {
+void MainMenuState::Logic() {
     completed = true;
 }
 
-void EssexEngine::Apps::Game::MainMenuState::Render() {
+void MainMenuState::Render() {
 }
 
-bool EssexEngine::Apps::Game::MainMenuState::PauseUnder() {
+bool MainMenuState::PauseUnder() {
     return false;
 }
