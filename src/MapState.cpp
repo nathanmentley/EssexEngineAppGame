@@ -50,9 +50,10 @@ font(
         context->GetDaemon<GfxDaemon>()->GetFont(
             context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
             context->GetDaemon<FileSystemDaemon>()->ReadFile("content/root/Fonts/Roboto-Thin.ttf"),
-            14
+            48
         )        
     );
+    counter = 0;
 }
 
 MapState::~MapState(){}
@@ -120,14 +121,18 @@ void MapState::Logic() {
 }
 
 void MapState::Render() {
+    counter++;
     map->Render();
+
+    char buffer[255];
+    sprintf(buffer, "%d", counter);
 
     context->GetDaemon<GfxDaemon>()->RenderString(
         context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
         font.ToWeakPointer(),
-        "test",
-        100,
-        100
+        buffer,
+        10,
+        10
     );
 }
 
