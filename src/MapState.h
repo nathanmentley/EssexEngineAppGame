@@ -32,5 +32,6 @@ namespace Game{
             bool PauseUnder();
         private:
             UniquePointer<Libs::IsoMap::Map> map;
+            UniquePointer<Daemons::Gfx::IFont> font;
     };
 }}};

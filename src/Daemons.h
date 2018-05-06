@@ -12,3 +12,5 @@
 
 #include <EssexEngineInputDaemon/InputDaemon.h>
 #include <EssexEngineSfxDaemon/SfxDaemon.h>
+#include <EssexEngineGfxDaemon/GfxDaemon.h>
+#include <EssexEngineFileSystemDaemon/FileSystemDaemon.h>

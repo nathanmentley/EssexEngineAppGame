@@ -15,10 +15,12 @@ using EssexEngine::UniquePointer;
 
 using EssexEngine::Daemons::Json::IJsonDocument;
 using EssexEngine::Daemons::Input::KeyboardButton::InputKeys;
+using EssexEngine::Daemons::Gfx::IFont;
 
 using EssexEngine::Daemons::Input::InputDaemon;
-using EssexEngine::Daemons::Gfx::GfxDaemon;
+using EssexEngine::Daemons::FileSystem::FileSystemDaemon;
 using EssexEngine::Daemons::Sfx::SfxDaemon;
+using EssexEngine::Daemons::Gfx::GfxDaemon;
 
 using EssexEngine::Libs::IsoMap::Map;
 using EssexEngine::Libs::IsoMap::MapCharacterActionTypes;
@@ -40,7 +42,18 @@ map(
             _mapDocument
         )
     )
-) {}
+),
+font(
+    UniquePointer<IFont>()
+) {
+    font.Replace(
+        context->GetDaemon<GfxDaemon>()->GetFont(
+            context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+            context->GetDaemon<FileSystemDaemon>()->ReadFile("content/root/Fonts/Roboto-Thin.ttf"),
+            14
+        )        
+    );
+}
 
 MapState::~MapState(){}
 
@@ -111,6 +124,7 @@ void MapState::Render() {
 
     context->GetDaemon<GfxDaemon>()->RenderString(
         context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+        font.ToWeakPointer(),
         "test",
         100,
         100
