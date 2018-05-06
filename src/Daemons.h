@@ -11,3 +11,4 @@
 #pragma once
 
 #include <EssexEngineInputDaemon/InputDaemon.h>
+#include <EssexEngineSfxDaemon/SfxDaemon.h>

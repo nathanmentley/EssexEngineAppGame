@@ -18,6 +18,7 @@ using EssexEngine::Daemons::Input::KeyboardButton::InputKeys;
 
 using EssexEngine::Daemons::Input::InputDaemon;
 using EssexEngine::Daemons::Gfx::GfxDaemon;
+using EssexEngine::Daemons::Sfx::SfxDaemon;
 
 using EssexEngine::Libs::IsoMap::Map;
 using EssexEngine::Libs::IsoMap::MapCharacterActionTypes;
@@ -49,6 +50,12 @@ void MapState::Logic() {
     //set x / y position
     map->SetScreenX(map->GetCharacter()->GetX());
     map->SetScreenY(map->GetCharacter()->GetY());
+
+    context->GetDaemon<SfxDaemon>()->SetAudioListenerLocation(
+        map->GetCharacter()->GetX(),
+        map->GetCharacter()->GetY(),
+        0
+    );
     
     //Listen to Actions.
     if (context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Space)) {
