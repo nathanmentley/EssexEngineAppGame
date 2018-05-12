@@ -11,8 +11,11 @@
 
 #include <EssexEngineAppGame/MainMenuState.h>
 
+using EssexEngine::Core::IApp;
 using EssexEngine::Core::Models::IState;
+
 using EssexEngine::Daemons::FileSystem::IFileBuffer;
+using EssexEngine::Daemons::Window::IRenderContext;
 
 using EssexEngine::Daemons::FileSystem::FileSystemDaemon;
 using EssexEngine::Daemons::Json::JsonDaemon;
@@ -20,10 +23,16 @@ using EssexEngine::Daemons::Json::JsonDaemon;
 using EssexEngine::Apps::Game::MainMenuState;
 using EssexEngine::Apps::Game::MapState;
 
-MainMenuState::MainMenuState(WeakPointer<Context> _context): State(_context),
+MainMenuState::MainMenuState(
+    WeakPointer<Context> _context,
+    WeakPointer<IApp> _app,
+    WeakPointer<IRenderContext> _renderContext
+): State(_context, _app),
 mapState(
     UniquePointer<MapState>()
-) {}
+) {
+    renderContext = _renderContext;
+}
 
 MainMenuState::~MainMenuState() {}
 
@@ -50,11 +59,13 @@ void MainMenuState::Setup() {
     mapState.Replace(
         new MapState(
             context,
+            app,
             gameDocument.ToWeakPointer(),
-            mapDocument.ToWeakPointer()
+            mapDocument.ToWeakPointer(),
+            renderContext
         )
     );
-    context->GetStateStack()->Push(mapState.ToWeakPointer().Cast<IState>());
+    app->GetStateStack()->Push(mapState.ToWeakPointer().Cast<IState>());
 }
 
 void MainMenuState::Logic() {

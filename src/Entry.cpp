@@ -14,12 +14,13 @@
 
 using EssexEngine::Context;
 using EssexEngine::WeakPointer;
+using EssexEngine::Core::IApp;
 using EssexEngine::Core::BaseApp;
 
 using EssexEngine::Apps::Game::GameApp;
 
 extern "C" {
-    void app_init(WeakPointer<Context> context) {
-        context->RegisterApp(new GameApp(context));
+    void* app_init(WeakPointer<Context> context) {
+        return new GameApp(context);
     }
 }

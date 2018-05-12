@@ -26,7 +26,11 @@ namespace Game{
     class MainMenuState:public MapState::State
     {
         public:
-            MainMenuState(WeakPointer<Context> _context);
+            MainMenuState(
+                WeakPointer<Context> _context,
+                WeakPointer<Core::IApp> _app,
+                WeakPointer<Daemons::Window::IRenderContext> _renderContext
+            );
             ~MainMenuState();
             
             //override
@@ -39,5 +43,7 @@ namespace Game{
             UniquePointer<Daemons::Json::IJsonDocument> mapDocument;
 
             UniquePointer<MapState> mapState;
+
+            WeakPointer<Daemons::Window::IRenderContext> renderContext;
     };
 }}};

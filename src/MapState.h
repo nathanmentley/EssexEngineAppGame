@@ -22,7 +22,13 @@ namespace Game{
     class MapState:public Core::Models::State
     {
         public:
-            MapState(WeakPointer<Context> _context, WeakPointer<Daemons::Json::IJsonDocument> _gameDocument, WeakPointer<Daemons::Json::IJsonDocument> _mapDocument);
+            MapState(
+                WeakPointer<Context> _context,
+                WeakPointer<Core::IApp> _app,
+                WeakPointer<Daemons::Json::IJsonDocument> _gameDocument,
+                WeakPointer<Daemons::Json::IJsonDocument> _mapDocument,
+                WeakPointer<Daemons::Window::IRenderContext> _renderContext
+            );
             ~MapState();
             
             //override
@@ -33,6 +39,7 @@ namespace Game{
         private:
             UniquePointer<Libs::IsoMap::Map> map;
             UniquePointer<Daemons::Gfx::IFont> font;
+            WeakPointer<Daemons::Window::IRenderContext> renderContext;
 
             int counter;
     };

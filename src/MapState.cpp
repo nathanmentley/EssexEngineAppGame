@@ -13,6 +13,8 @@
 
 using EssexEngine::UniquePointer;
 
+using EssexEngine::Core::IApp;
+
 using EssexEngine::Daemons::Json::IJsonDocument;
 using EssexEngine::Daemons::Input::KeyboardButton::InputKeys;
 using EssexEngine::Daemons::Gfx::IFont;
@@ -31,14 +33,16 @@ using EssexEngine::Apps::Game::MapState;
 
 MapState::MapState(
     WeakPointer<Context> _context,
+    WeakPointer<IApp> _app,
     WeakPointer<IJsonDocument> _gameDocument,
-    WeakPointer<IJsonDocument> _mapDocument
-):State(_context),
+    WeakPointer<IJsonDocument> _mapDocument,
+    WeakPointer<IRenderContext> _renderContext
+):State(_context, _app),
 map(
     UniquePointer<Map>(
         new Map(
             _context,
-            _context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+            _renderContext,
             _gameDocument,
             _mapDocument
         )
@@ -49,11 +53,13 @@ font(
 ) {
     font.Replace(
         context->GetDaemon<GfxDaemon>()->GetFont(
-            context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+            _renderContext,
             context->GetDaemon<FileSystemDaemon>()->ReadFile("content/root/Fonts/Roboto-Thin.ttf"),
             48
         )        
     );
+    
+    renderContext = _renderContext;
     counter = 0;
 }
 
@@ -62,8 +68,6 @@ MapState::~MapState(){}
 void MapState::Setup() {}
 
 void MapState::Logic() {
-    WeakPointer<IRenderContext> renderContext = context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext();
-
     //set x / y position
     map->SetScreenX(map->GetCharacter()->GetX());
     map->SetScreenY(map->GetCharacter()->GetY());
@@ -131,7 +135,7 @@ void MapState::Render() {
     sprintf(buffer, "%d", counter);
 
     context->GetDaemon<GfxDaemon>()->RenderString(
-        context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext(),
+        renderContext,
         font.ToWeakPointer(),
         buffer,
         10,

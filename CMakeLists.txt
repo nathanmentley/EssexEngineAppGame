@@ -2,8 +2,13 @@ ee_setup_project("EssexEngineAppGame" "src/Apps/Game/")
 
 target_link_libraries(EssexEngineAppGame EssexEngineCore)
 target_link_libraries(EssexEngineAppGame EssexEngineLibIsoMap)
+target_link_libraries(EssexEngineAppGame EssexEngineConfigDaemon)
 target_link_libraries(EssexEngineAppGame EssexEngineInputDaemon)
+target_link_libraries(EssexEngineAppGame EssexEngineFileSystemDaemon)
 target_link_libraries(EssexEngineAppGame EssexEngineSfxDaemon)
+target_link_libraries(EssexEngineAppGame EssexEngineWindowDaemon)
+target_link_libraries(EssexEngineAppGame EssexEngineSystemDaemon)
+target_link_libraries(EssexEngineAppGame EssexEngineGfxDaemon)
 
 add_custom_target(runGame
     COMMAND EssexEngineBootloader --game

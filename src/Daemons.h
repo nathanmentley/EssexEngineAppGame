@@ -11,6 +11,9 @@
 #pragma once
 
 #include <EssexEngineInputDaemon/InputDaemon.h>
+#include <EssexEngineConfigDaemon/ConfigDaemon.h>
 #include <EssexEngineSfxDaemon/SfxDaemon.h>
 #include <EssexEngineGfxDaemon/GfxDaemon.h>
+#include <EssexEngineWindowDaemon/WindowDaemon.h>
+#include <EssexEngineSystemDaemon/SystemDaemon.h>
 #include <EssexEngineFileSystemDaemon/FileSystemDaemon.h>
