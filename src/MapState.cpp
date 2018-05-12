@@ -1,7 +1,7 @@
 /* 
  * Essex Engine
  * 
- * Copyright (C) 2017 Nathan Mentley - All Rights Reserved
+ * Copyright (C) 2018 Nathan Mentley - All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the BSD license.
  *
@@ -16,6 +16,7 @@ using EssexEngine::UniquePointer;
 using EssexEngine::Daemons::Json::IJsonDocument;
 using EssexEngine::Daemons::Input::KeyboardButton::InputKeys;
 using EssexEngine::Daemons::Gfx::IFont;
+using EssexEngine::Daemons::Window::IRenderContext;
 
 using EssexEngine::Daemons::Input::InputDaemon;
 using EssexEngine::Daemons::FileSystem::FileSystemDaemon;
@@ -61,6 +62,8 @@ MapState::~MapState(){}
 void MapState::Setup() {}
 
 void MapState::Logic() {
+    WeakPointer<IRenderContext> renderContext = context->GetDaemon<GfxDaemon>()->GetPrimaryRenderContext();
+
     //set x / y position
     map->SetScreenX(map->GetCharacter()->GetX());
     map->SetScreenY(map->GetCharacter()->GetY());
@@ -72,47 +75,47 @@ void MapState::Logic() {
     );
     
     //Listen to Actions.
-    if (context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Space)) {
+    if (context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Space)) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::Attack);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left) &&
-        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Left) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Up)
     ) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorthWest);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right) &&
-        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Right) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Up)
     ) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorthEast);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left) &&
-        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Left) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Down)
     ) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouthWest);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right) &&
-        context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Right) &&
+        context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Down)
     ) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouthEast);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Left)) {
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Left)) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveWest);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Right)) {
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Right)) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveEast);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Up)) {
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Up)) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveNorth);
-    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Down)) {
+    } else if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Down)) {
         map->GetCharacter()->QueueAction(MapCharacterActionTypes::MoveSouth);
     } else {
         map->GetCharacter()->SetAnimation(CharacterAnimations::Stance);
     }
     
-    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Plus)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Plus)) {
         map->ZoomIn();
     }
-    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Minus)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Minus)) {
         map->ZoomOut();
     }
-    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Esc)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Esc)) {
         this->completed = true;
     }
     
-    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(InputKeys::Tilde)) {
+    if(context->GetDaemon<InputDaemon>()->IsKeyPressed(renderContext, InputKeys::Tilde)) {
         //showDebugConsole = !showDebugConsole;
     }
     
