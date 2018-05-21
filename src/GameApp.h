@@ -72,7 +72,9 @@ namespace Game{
                         GetAppVersion().c_str()
                     );
                     
-                    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->Setup(mainRenderContext.ToWeakPointer());
+                    context->GetDaemon<Daemons::Sfx::SfxDaemon>()->SetupSfx();
+                    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->SetupGfx();
+                    context->GetDaemon<Daemons::Gfx::GfxDaemon>()->SetupRenderContext(mainRenderContext.ToWeakPointer());
                     
                     GetStateStack()->Push(GetInitState());
                 }
